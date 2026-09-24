@@ -1,13 +1,19 @@
 # Governance Documentation Suite
 
+[![Tests](https://github.com/nitinparab4cloud/governance-documentation-suite/actions/workflows/tests.yml/badge.svg)](https://github.com/nitinparab4cloud/governance-documentation-suite/actions/workflows/tests.yml)
+
 A generator that produces the full artifact set an AI governance function has to
 produce and keep current for a real model — Model Card, Risk Assessment, Data
 Governance Statement, Human Oversight Design, Incident Response Runbook, and Vendor
 AI Risk Questionnaire — from a single YAML spec file. The deliverable isn't six
 hand-written documents; it's a **process** that regenerates them for any model.
 
-**Live demo:** _add your Hugging Face Space link here once deployed_
-**Part of:** [AI Governance Case Files](../README.md) — a four-project portfolio series
+**Live demo:** not hosted yet — run it locally (see "It already works" below).
+
+**Part of:** AI Governance Case Files, a six-project series: [EU AI Act Risk Navigator](https://github.com/nitinparab4cloud/ai-act-risk-navigator) · [Algorithmic Fairness Auditor](https://github.com/nitinparab4cloud/fairness-auditor) · [Governance Documentation Suite](https://github.com/nitinparab4cloud/governance-documentation-suite) · [Explainability Auditor](https://github.com/nitinparab4cloud/explainability-auditor) · [Governed RAG Agent](https://github.com/nitinparab4cloud/governed-rag-agent) · [Agentic AI Incident Response](https://github.com/nitinparab4cloud/agentic-incident-response)
+
+**Origin:** Began as an extension of NUS MSI5004 (AI Governance and Ethics) coursework and was built out independently, beyond the module syllabus.
+
 **Status:** the generator is built and tested (see below); the worked example ships
 now, a second worked example and the Space UI are this project's remaining milestones.
 
