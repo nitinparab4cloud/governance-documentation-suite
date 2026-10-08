@@ -1,6 +1,6 @@
 # Data Governance Statement: Toxic Comment Classifier (toxic-bert)
 
-Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-09-09
+Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03
 
 ## Data Sources
 

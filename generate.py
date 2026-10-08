@@ -1,12 +1,8 @@
-# Copyright © 2026 Nitin Parab. Part of the "AI Governance Case Files" portfolio
-# (https://github.com/nitinparab4cloud/governance-documentation-suite).
-# See this project's LICENSE file for reuse terms.
-
 """
 generate.py
 -----------
 Renders the full six-document governance artifact set from one YAML spec
-file. This is the point of Case 03: the deliverable isn't six hand-written
+file. This is the point of CrossSector-2: the deliverable isn't six hand-written
 documents, it's a *process* that produces those six documents for any model
 you point it at.
 

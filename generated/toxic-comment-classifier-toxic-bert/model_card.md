@@ -1,7 +1,7 @@
 # Model Card: Toxic Comment Classifier (toxic-bert)
 
 _Format follows Mitchell et al. (2019), "Model Cards for Model Reporting"._
-Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-09-09
+Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03
 
 ## Model Details
 A BERT-based multi-label classifier that scores a piece of text for six categories of toxicity (toxic, severe_toxic, obscene, threat, insult, identity_hate), intended as a content-moderation signal for comment sections or chat platforms.
@@ -38,7 +38,7 @@ Toxicity classifiers trained on this kind of data are documented in the literatu
 
 
 ## Caveats and Recommendations
-Use as a human-in-the-loop triage signal only at first deployment (see Human Oversight Design). Do not fully automate removals until a platform-specific fairness audit -- structured the same way as Case 02 in this portfolio -- has been run against real traffic.
+Use as a human-in-the-loop triage signal only at first deployment (see Human Oversight Design). Do not fully automate removals until a platform-specific fairness audit -- structured the same way as Legal-1 in this portfolio -- has been run against real traffic.
 
 
 ---

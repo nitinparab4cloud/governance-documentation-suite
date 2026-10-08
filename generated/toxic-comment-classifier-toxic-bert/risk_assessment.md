@@ -2,7 +2,7 @@
 
 _Scoring method follows AI Verify Testing Framework 4.3.1: risk = probability × severity,
 read alongside the scope of affected parties._
-Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-09-09
+Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03
 
 ## Risk Rating
 
@@ -19,7 +19,7 @@ Probability rated Medium: false positives/negatives are a routine, expected occu
 
 ## Regulatory context
 
-- **EU AI Act tier:** Likely outside Annex III (not squarely one of the 8 listed sectors) -- but re-run this through the AI Act Risk Navigator (Case 01) if scope expands, e.g. into automated account suspension, which starts to resemble an access-to-essential-services or employment-adjacent use case. — Content moderation is not itself an Annex III category as of the current text; monitor for sector-specific delegated acts.
+- **EU AI Act tier:** Likely outside Annex III (not squarely one of the 8 listed sectors) -- but re-run this through the AI Act Risk Navigator (CrossSector-1) if scope expands, e.g. into automated account suspension, which starts to resemble an access-to-essential-services or employment-adjacent use case. — Content moderation is not itself an Annex III category as of the current text; monitor for sector-specific delegated acts.
 
 - **Review cadence:** re-assess this rating on any material change to intended use,
   training data, deployment context, or after any incident logged in the
@@ -31,7 +31,7 @@ Probability rated Medium: false positives/negatives are a routine, expected occu
 
 - Confidence threshold for surfacing to moderators, not for auto-action
 
-- Planned: identity-term false-positive audit before any expansion in scope (mirrors Case 02's methodology)
+- Planned: identity-term false-positive audit before any expansion in scope (mirrors Legal-1's methodology)
 
 
 ---

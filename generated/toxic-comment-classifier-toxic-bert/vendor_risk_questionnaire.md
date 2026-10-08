@@ -3,7 +3,7 @@
 _Even for an internally-built system, this document exists so the same
 questionnaire is ready the day this capability is sourced from, or replaced by,
 a third party._
-Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-09-09
+Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03
 
 ## Sourcing
 - **Vendor:** Internal

@@ -3,12 +3,12 @@
 _Model chosen from the three standard oversight patterns: human-in-the-loop
 (approve every decision), human-over-the-loop (monitor and can override),
 human-out-of-the-loop (fully autonomous, reviewed periodically)._
-Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-09-09
+Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03
 
 ## Oversight Model
 **Selected pattern:** Human-over-the-loop
 
-**Rationale:** Matched to a Medium overall risk level: moderators are not required to approve every single score, but they review every comment the model surfaces above the flagging threshold, and can override or retrain the threshold. This sits deliberately short of full autonomy (human-out-of- the-loop) given the documented identity-term false-positive risk noted in the Model Card.
+**Rationale:** Matched to a Medium overall risk level: moderators are not required to approve every single score, but they review every comment the model surfaces above the flagging threshold, and can override or retrain the threshold. This sits deliberately short of full autonomy (human-out-of-the-loop) given the documented identity-term false-positive risk noted in the Model Card.
 
 
 This pattern is matched to the system's overall risk level of

@@ -10,7 +10,7 @@
 # chat product.
 #
 # Replace every field below with your own worked example, or duplicate this
-# file for a second one (e.g. the COMPAS-adjacent model from Case 02, for
+# file for a second one (e.g. the COMPAS-adjacent model from Legal-1, for
 # maximum continuity across the three-project series).
 
 system_name: "Toxic Comment Classifier (toxic-bert)"
@@ -60,7 +60,7 @@ ethical_considerations: >
 caveats_recommendations: >
   Use as a human-in-the-loop triage signal only at first deployment (see
   Human Oversight Design). Do not fully automate removals until a
-  platform-specific fairness audit -- structured the same way as Case 02 in
+  platform-specific fairness audit -- structured the same way as Legal-1 in
   this portfolio -- has been run against real traffic.
 
 risk_probability: "Medium"
@@ -77,14 +77,14 @@ risk_notes: >
   severity would move to High if this were reconfigured for automatic
   removal or bans without review.
 eu_ai_act_tier: "Likely outside Annex III (not squarely one of the 8 listed
-  sectors) -- but re-run this through the AI Act Risk Navigator (Case 01) if
+  sectors) -- but re-run this through the AI Act Risk Navigator (CrossSector-1) if
   scope expands, e.g. into automated account suspension, which starts to
   resemble an access-to-essential-services or employment-adjacent use case."
 eu_ai_act_basis: "Content moderation is not itself an Annex III category as of the current text; monitor for sector-specific delegated acts."
 mitigations:
   - "Human moderator reviews every flagged comment before removal (see Human Oversight Design)"
   - "Confidence threshold for surfacing to moderators, not for auto-action"
-  - "Planned: identity-term false-positive audit before any expansion in scope (mirrors Case 02's methodology)"
+  - "Planned: identity-term false-positive audit before any expansion in scope (mirrors Legal-1's methodology)"
 
 data_sources:
   - "Jigsaw Toxic Comment Classification Challenge dataset (public, Kaggle-hosted, Wikipedia talk-page comments)"
@@ -133,7 +133,7 @@ incident_severity_levels:
     response_time: "5 business days"
 incident_detection: >
   Moderator-reported misclassifications logged in the moderation tool;
-  periodic sampling audit (see Case 02 methodology) run quarterly to catch
+  periodic sampling audit (see Legal-1 methodology) run quarterly to catch
   systematic drift the moderator-reporting channel would miss.
 containment_action: "Raise the flagging threshold or disable auto-surfacing for the affected category pending review."
 incident_contacts:

@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CrossSector-2 &mdash; Governance Documentation Suite</title>
+<style>
+  :root {
+    --blue: #2563eb; --blue-dark: #1d4ed8; --orange: #ea580c;
+    --green: #16a34a; --red: #dc2626; --purple: #7c3aed; --gray-50: #f9fafb; --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb; --gray-400: #9ca3af; --gray-600: #4b5563; --gray-800: #1f2937;
+    --bg: #ffffff; --fg: #1f2937; --card-bg: #ffffff; --border: #e5e7eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a; --fg: #e5e7eb; --card-bg: #1e293b; --border: #334155;
+      --gray-50: #1e293b; --gray-100: #273449; --gray-200: #334155;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg); line-height: 1.5;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .subtitle { color: var(--gray-600); margin-top: 0; font-size: 0.95rem; }
+  #selftest-banner {
+    padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 20px;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+  }
+  #selftest-banner.pass { background: #dcfce7; color: #166534; }
+  #selftest-banner.fail { background: #fee2e2; color: #991b1b; }
+  @media (prefers-color-scheme: dark) {
+    #selftest-banner.pass { background: #14532d; color: #bbf7d0; }
+    #selftest-banner.fail { background: #7f1d1d; color: #fecaca; }
+  }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; flex-wrap: wrap; }
+  .tab-btn {
+    background: none; border: none; padding: 10px 14px; cursor: pointer; font-size: 0.9rem;
+    color: var(--gray-600); border-bottom: 2px solid transparent; font-weight: 500;
+  }
+  .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; margin-bottom: 16px;
+  }
+  label { display: block; font-size: 0.85rem; font-weight: 600; margin: 10px 0 4px; }
+  textarea {
+    width: 100%; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.8rem;
+    padding: 10px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--gray-50); color: var(--fg); resize: vertical;
+  }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; }
+  .row > div { flex: 1; min-width: 320px; }
+  button.action {
+    background: var(--blue); color: white; border: none; border-radius: 6px;
+    padding: 8px 16px; font-size: 0.9rem; cursor: pointer; margin-top: 10px; font-weight: 600;
+  }
+  button.action:hover { background: var(--blue-dark); }
+  .result-box {
+    margin-top: 10px; padding: 10px 12px; border-radius: 6px; font-size: 0.88rem;
+    background: var(--gray-100);
+  }
+  .result-box p { margin: 0 0 8px; }
+  .error-box { background: #fee2e2; color: #991b1b; }
+  @media (prefers-color-scheme: dark) {
+    .error-box { background: #7f1d1d; color: #fecaca; }
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 8px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--gray-600); font-weight: 600; }
+  td.matrix-cell { text-align: center; font-weight: 600; }
+  .note { font-size: 0.83rem; color: var(--gray-600); margin-top: 4px; }
+  .doc-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+  .doc-tab-btn {
+    background: var(--gray-100); border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 10px; cursor: pointer; font-size: 0.8rem; color: var(--fg);
+  }
+  .doc-tab-btn.active { background: var(--blue); color: white; border-color: var(--blue); }
+  .doc-panel { display: none; }
+  .doc-panel.active { display: block; }
+  pre.doc-output {
+    white-space: pre-wrap; word-wrap: break-word; font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.8rem; background: var(--gray-50); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px; max-height: 520px; overflow-y: auto; margin: 0;
+  }
+  footer { margin-top: 40px; font-size: 0.8rem; color: var(--gray-600); }
+  a { color: var(--blue); }
+
+  .form-section { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; background: var(--gray-50); }
+  .form-section > summary { cursor: pointer; padding: 10px 14px; font-weight: 600; font-size: 0.9rem; list-style: revert; }
+  .form-section .section-body { padding: 4px 14px 14px; }
+  .field { margin-bottom: 12px; }
+  .field label { margin: 0 0 4px; }
+  .field input[type="text"], .field select {
+    width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--card-bg); color: var(--fg); font-size: 0.85rem;
+  }
+  .field textarea {
+    min-height: 70px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .field-help { font-size: 0.78rem; color: var(--gray-600); margin: 2px 0 0; }
+  .list-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: flex-start; flex-wrap: wrap; }
+  .list-row input {
+    flex: 1; min-width: 120px; padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--card-bg); color: var(--fg); font-size: 0.85rem;
+  }
+  .list-remove-btn {
+    background: var(--red); color: white; border: none; border-radius: 6px; width: 28px; height: 32px;
+    cursor: pointer; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .add-row-btn {
+    background: var(--gray-200); color: var(--fg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 5px 10px; font-size: 0.8rem; cursor: pointer; margin-top: 2px;
+  }
+  .item-row-fields { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+  .item-row-fields input { flex: 1; min-width: 100px; }
+  #json-advanced { margin-top: 14px; font-size: 0.85rem; }
+  #json-advanced > summary { cursor: pointer; font-weight: 600; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Governance Documentation Suite</h1>
+  <p class="subtitle">
+    One YAML/JSON spec in, six governance documents out — Model Card, Risk Assessment, Data
+    Governance Statement, Human Oversight Design, Incident Response Runbook, and Vendor AI Risk
+    Questionnaire — rendered from the same source of truth so they can never disagree about what
+    the system is. This static demo is a dependency-free JS port of the Python generator
+    (<code>generate.py</code>); everything runs in your browser, no server, no network calls.
+  </p>
+  <div id="selftest-banner">Running self-tests&hellip;</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="generate">Generate from a spec</button>
+    <button class="tab-btn" data-tab="matrix">Risk matrix</button>
+    <button class="tab-btn" data-tab="methodology">Methodology &amp; Sources</button>
+  </div>
+
+  <div class="panel active" id="panel-generate">
+    <div class="card">
+      <p class="note">Fill in the form below (prefilled with a worked example — the <code>unitary/toxic-bert</code>
+        content-moderation classifier) and click Generate. Everything runs in your browser: the form builds the
+        same structured spec the Python version takes as YAML, then renders all six documents from it. Use the
+        "+ Add" / red buttons to add or remove list items (affected parties, mitigations, metrics, etc.).</p>
+      <div class="row">
+        <div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+            <button class="action" id="generate-btn" type="button">Generate documents</button>
+            <button class="action" id="reset-btn" type="button" style="background:var(--gray-600)">Reset to example</button>
+          </div>
+          <form id="spec-form" onsubmit="return false;"></form>
+          <details id="json-advanced">
+            <summary>Advanced: import / export as JSON</summary>
+            <p class="note">Already have a spec as JSON (e.g. from the field-reference spreadsheet)? Paste it below
+              and load it into the form. Or export what the form currently holds to copy elsewhere.</p>
+            <textarea id="json-adv-box" rows="14"></textarea>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+              <button class="action" id="json-import-btn" type="button">Load JSON into form</button>
+              <button class="action" id="json-export-btn" type="button" style="background:var(--gray-600)">Export form as JSON</button>
+            </div>
+            <div id="json-adv-msg" class="note"></div>
+          </details>
+        </div>
+        <div>
+          <div id="risk-result" class="result-box"></div>
+          <div class="doc-tabs" id="doc-tabs"></div>
+          <div id="doc-panels"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-matrix">
+    <div class="card">
+      <h3 style="margin-top:0">How the overall risk level is computed</h3>
+      <p class="note">Probability of harm × severity if it occurs → one of four levels. Deliberately
+        simple: a reviewer should be able to sanity-check this table in ten seconds, which is the point
+        of a visible matrix instead of an opaque score.</p>
+      <table id="matrix-table"></table>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-methodology">
+    <div class="card" id="methodology-card"></div>
+  </div>
+
+  <footer>
+    Part of the AI Governance Case Files portfolio. All rights reserved — see LICENSE.
+  </footer>
+</div>
+
+<script>
+const ARTIFACT = {
+  "spec": {
+    "system_name": "Toxic Comment Classifier (toxic-bert)",
+    "version": "1.0",
+    "owner": "Nitin Parab (portfolio project — not affiliated with Unitary AI)",
+    "description": "A BERT-based multi-label classifier that scores a piece of text for six categories of toxicity (toxic, severe_toxic, obscene, threat, insult, identity_hate), intended as a content-moderation signal for comment sections or chat platforms.\n",
+    "model_type": "Fine-tuned BERT-base, multi-label text classification",
+    "base_model": "bert-base-uncased",
+    "intended_use": "Flagging candidate-toxic comments for human moderator review on a moderate-traffic community platform. Output is a confidence score per category, not an automatic removal decision.\n",
+    "out_of_scope_uses": "Fully automated content removal without human review; use as the sole basis for account bans; use on languages other than English (the base model and training data are English-only); use as a general sentiment classifier.\n",
+    "training_data_summary": "Jigsaw Toxic Comment Classification Challenge dataset (Wikipedia talk-page comments, publicly released by Jigsaw/Conversation AI via Kaggle), human-labelled across six toxicity categories.\n",
+    "evaluation_data_summary": "Held-out split of the same Jigsaw dataset; the model card on Hugging Face reports per-category ROC-AUC. Re-validate on a sample of your own platform's comments before relying on these numbers -- the training distribution (Wikipedia talk pages, ~2017) will not match every deployment's actual comment style or period.\n",
+    "performance_metrics": [
+      {
+        "name": "ROC-AUC (toxic)",
+        "value": "0.98 (per published model card; re-validate for your data)"
+      },
+      {
+        "name": "ROC-AUC (identity_hate)",
+        "value": "0.97 (per published model card; smallest-support category -- treat with the most caution)"
+      }
+    ],
+    "ethical_considerations": "Toxicity classifiers trained on this kind of data are documented in the literature to have disparate false-positive rates on text that mentions identity terms neutrally (e.g. \"I am a gay man\" scoring higher than a comparable neutral sentence) -- this is a known failure mode of the training data, not specific to this checkpoint, and should be tested for directly (see Risk Assessment) before this model gates any real action.\n",
+    "caveats_recommendations": "Use as a human-in-the-loop triage signal only at first deployment (see Human Oversight Design). Do not fully automate removals until a platform-specific fairness audit -- structured the same way as Legal-1 in this portfolio -- has been run against real traffic.\n",
+    "risk_probability": "Medium",
+    "risk_severity": "Medium",
+    "affected_parties": [
+      "Platform users whose comments are scored",
+      "Users targeted by content the system fails to catch",
+      "Human moderators relying on the signal"
+    ],
+    "risk_notes": "Probability rated Medium: false positives/negatives are a routine, expected occurrence for any moderation classifier, not a rare edge case. Severity rated Medium rather than High because the current design keeps a human moderator in the loop before any account-level action is taken -- severity would move to High if this were reconfigured for automatic removal or bans without review.\n",
+    "eu_ai_act_tier": "Likely outside Annex III (not squarely one of the 8 listed sectors) -- but re-run this through the AI Act Risk Navigator (CrossSector-1) if scope expands, e.g. into automated account suspension, which starts to resemble an access-to-essential-services or employment-adjacent use case.",
+    "eu_ai_act_basis": "Content moderation is not itself an Annex III category as of the current text; monitor for sector-specific delegated acts.",
+    "mitigations": [
+      "Human moderator reviews every flagged comment before removal (see Human Oversight Design)",
+      "Confidence threshold for surfacing to moderators, not for auto-action",
+      "Planned: identity-term false-positive audit before any expansion in scope (mirrors Legal-1's methodology)"
+    ],
+    "data_sources": [
+      "Jigsaw Toxic Comment Classification Challenge dataset (public, Kaggle-hosted, Wikipedia talk-page comments)"
+    ],
+    "pii_present": true,
+    "pii_handling_notes": "Wikipedia talk-page comments may incidentally contain personal information volunteered by the original commenters. No additional PII is collected by this classifier itself; it processes platform comment text at inference time and does not persist it beyond the moderation queue's own retention policy.\n",
+    "data_governance_measures": [
+      "Inference-time text is retained only as long as the platform's own moderation-queue retention policy requires",
+      "No re-training on live platform data without a separate data governance review",
+      "Model checkpoint version pinned and logged for every deployment"
+    ],
+    "data_limitations": "Training data is English-only, sourced from a single platform (Wikipedia) and time period (~2017) -- performance on a different platform's comment style, slang, or non-English text is unvalidated.\n",
+    "oversight_model": "Human-over-the-loop",
+    "oversight_rationale": "Matched to a Medium overall risk level: moderators are not required to approve every single score, but they review every comment the model surfaces above the flagging threshold, and can override or retrain the threshold. This sits deliberately short of full autonomy (human-out-of-the-loop) given the documented identity-term false-positive risk noted in the Model Card.\n",
+    "escalation_path": "Flagged comment > moderation queue > human moderator decision. Comments scoring in the top confidence band for \"threat\" are escalated to a senior moderator within 1 hour regardless of queue volume.\n",
+    "contestability_mechanism": "A user whose comment was removed can appeal through the platform's standard content-appeal form; appeals are reviewed by a moderator who did not make the original removal decision.\n",
+    "incident_severity_levels": [
+      {
+        "name": "Sev 1",
+        "description": "Systematic over-flagging or under-flagging affecting a large share of a protected group's comments",
+        "response_time": "4 hours"
+      },
+      {
+        "name": "Sev 2",
+        "description": "Isolated but harmful misclassification (e.g. a credible threat missed)",
+        "response_time": "24 hours"
+      },
+      {
+        "name": "Sev 3",
+        "description": "Isolated false positive with no downstream harm (comment queued, later cleared on review)",
+        "response_time": "5 business days"
+      }
+    ],
+    "incident_detection": "Moderator-reported misclassifications logged in the moderation tool; periodic sampling audit (see Legal-1 methodology) run quarterly to catch systematic drift the moderator-reporting channel would miss.\n",
+    "containment_action": "Raise the flagging threshold or disable auto-surfacing for the affected category pending review.",
+    "incident_contacts": [
+      "Trust & Safety lead",
+      "Model owner"
+    ],
+    "post_incident_review_threshold": "2",
+    "post_incident_review_window": "5 business days",
+    "vendor_name": "Internal",
+    "vendor_data_handling": "N/A -- internally deployed open-weight model; no vendor data-processing relationship exists for this checkpoint.",
+    "vendor_documentation_available": "N/A",
+    "vendor_incident_notification_sla": "N/A",
+    "vendor_fairness_testing": "N/A -- see this project's own planned fairness audit instead.",
+    "vendor_offboarding_terms": "N/A",
+    "vendor_audit_rights": "N/A -- this section is retained in every generated document set so it's ready the day any component of this pipeline is sourced from a vendor instead.",
+    "generated_date": "2026-10-03",
+    "overall_risk_level": "Medium"
+  },
+  "reference_rendered": {
+    "model_card.md": "# Model Card: Toxic Comment Classifier (toxic-bert)\n\n_Format follows Mitchell et al. (2019), \"Model Cards for Model Reporting\"._\nVersion 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03\n\n## Model Details\nA BERT-based multi-label classifier that scores a piece of text for six categories of toxicity (toxic, severe_toxic, obscene, threat, insult, identity_hate), intended as a content-moderation signal for comment sections or chat platforms.\n\n\n- **Model type:** Fine-tuned BERT-base, multi-label text classification\n- **Developed by:** Nitin Parab (portfolio project — not affiliated with Unitary AI)\n- **Base model:** bert-base-uncased\n\n## Intended Use\n**Primary intended uses:** Flagging candidate-toxic comments for human moderator review on a moderate-traffic community platform. Output is a confidence score per category, not an automatic removal decision.\n\n\n**Out-of-scope uses:** Fully automated content removal without human review; use as the sole basis for account bans; use on languages other than English (the base model and training data are English-only); use as a general sentiment classifier.\n\n\n## Training Data\nJigsaw Toxic Comment Classification Challenge dataset (Wikipedia talk-page comments, publicly released by Jigsaw/Conversation AI via Kaggle), human-labelled across six toxicity categories.\n\n\n## Evaluation Data\nHeld-out split of the same Jigsaw dataset; the model card on Hugging Face reports per-category ROC-AUC. Re-validate on a sample of your own platform's comments before relying on these numbers -- the training distribution (Wikipedia talk pages, ~2017) will not match every deployment's actual comment style or period.\n\n\n## Performance\n\n- **ROC-AUC (toxic):** 0.98 (per published model card; re-validate for your data)\n\n- **ROC-AUC (identity_hate):** 0.97 (per published model card; smallest-support category -- treat with the most caution)\n\n\n## Ethical Considerations\nToxicity classifiers trained on this kind of data are documented in the literature to have disparate false-positive rates on text that mentions identity terms neutrally (e.g. \"I am a gay man\" scoring higher than a comparable neutral sentence) -- this is a known failure mode of the training data, not specific to this checkpoint, and should be tested for directly (see Risk Assessment) before this model gates any real action.\n\n\n## Caveats and Recommendations\nUse as a human-in-the-loop triage signal only at first deployment (see Human Oversight Design). Do not fully automate removals until a platform-specific fairness audit -- structured the same way as Legal-1 in this portfolio -- has been run against real traffic.\n\n\n---\n_See also: [Risk Assessment](risk_assessment.md), [Data Governance Statement](data_governance.md),\n[Human Oversight Design](human_oversight.md)._",
+    "risk_assessment.md": "# Risk Assessment: Toxic Comment Classifier (toxic-bert)\n\n_Scoring method follows AI Verify Testing Framework 4.3.1: risk = probability × severity,\nread alongside the scope of affected parties._\nVersion 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03\n\n## Risk Rating\n\n| Factor | Rating |\n|---|---|\n| Probability of harm occurring | Medium |\n| Severity if it occurs | Medium |\n| Affected parties | Platform users whose comments are scored, Users targeted by content the system fails to catch, Human moderators relying on the signal |\n| **Overall risk level** | **Medium** |\n\n## Rationale\nProbability rated Medium: false positives/negatives are a routine, expected occurrence for any moderation classifier, not a rare edge case. Severity rated Medium rather than High because the current design keeps a human moderator in the loop before any account-level action is taken -- severity would move to High if this were reconfigured for automatic removal or bans without review.\n\n\n## Regulatory context\n\n- **EU AI Act tier:** Likely outside Annex III (not squarely one of the 8 listed sectors) -- but re-run this through the AI Act Risk Navigator (CrossSector-1) if scope expands, e.g. into automated account suspension, which starts to resemble an access-to-essential-services or employment-adjacent use case. — Content moderation is not itself an Annex III category as of the current text; monitor for sector-specific delegated acts.\n\n- **Review cadence:** re-assess this rating on any material change to intended use,\n  training data, deployment context, or after any incident logged in the\n  [Incident Response Runbook](incident_response.md).\n\n## Mitigations in place\n\n- Human moderator reviews every flagged comment before removal (see Human Oversight Design)\n\n- Confidence threshold for surfacing to moderators, not for auto-action\n\n- Planned: identity-term false-positive audit before any expansion in scope (mirrors Legal-1's methodology)\n\n\n---\n_See also: [Model Card](model_card.md), [Human Oversight Design](human_oversight.md),\n[Incident Response Runbook](incident_response.md)._",
+    "data_governance.md": "# Data Governance Statement: Toxic Comment Classifier (toxic-bert)\n\nVersion 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03\n\n## Data Sources\n\n- Jigsaw Toxic Comment Classification Challenge dataset (public, Kaggle-hosted, Wikipedia talk-page comments)\n\n\n## Personal Data\n- **Contains personal data:** Yes\n\n- **Basis / handling:** Wikipedia talk-page comments may incidentally contain personal information volunteered by the original commenters. No additional PII is collected by this classifier itself; it processes platform comment text at inference time and does not persist it beyond the moderation queue's own retention policy.\n\n\n\n## Data Governance Measures\n\n- Inference-time text is retained only as long as the platform's own moderation-queue retention policy requires\n\n- No re-training on live platform data without a separate data governance review\n\n- Model checkpoint version pinned and logged for every deployment\n\n\n## Known Limitations\nTraining data is English-only, sourced from a single platform (Wikipedia) and time period (~2017) -- performance on a different platform's comment style, slang, or non-English text is unvalidated.\n\n\n---\n_See also: [Model Card](model_card.md), [Risk Assessment](risk_assessment.md)._",
+    "human_oversight.md": "# Human Oversight Design: Toxic Comment Classifier (toxic-bert)\n\n_Model chosen from the three standard oversight patterns: human-in-the-loop\n(approve every decision), human-over-the-loop (monitor and can override),\nhuman-out-of-the-loop (fully autonomous, reviewed periodically)._\nVersion 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03\n\n## Oversight Model\n**Selected pattern:** Human-over-the-loop\n\n**Rationale:** Matched to a Medium overall risk level: moderators are not required to approve every single score, but they review every comment the model surfaces above the flagging threshold, and can override or retrain the threshold. This sits deliberately short of full autonomy (human-out-of-the-loop) given the documented identity-term false-positive risk noted in the Model Card.\n\n\nThis pattern is matched to the system's overall risk level of\n**Medium** (see [Risk Assessment](risk_assessment.md)) — the\nhigher the risk, the closer to human-in-the-loop the design should sit.\n\n## Escalation Path\nFlagged comment > moderation queue > human moderator decision. Comments scoring in the top confidence band for \"threat\" are escalated to a senior moderator within 1 hour regardless of queue volume.\n\n\n## Contestability\nIndividuals affected by this system's outputs can challenge a decision via:\nA user whose comment was removed can appeal through the platform's standard content-appeal form; appeals are reviewed by a moderator who did not make the original removal decision.\n\n\n---\n_See also: [Risk Assessment](risk_assessment.md), [Incident Response Runbook](incident_response.md)._",
+    "incident_response.md": "# Incident Response Runbook: Toxic Comment Classifier (toxic-bert)\n\nVersion 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03\n\n## Severity Levels\n\n- **Sev 1:** Systematic over-flagging or under-flagging affecting a large share of a protected group's comments — target response time: 4 hours\n\n- **Sev 2:** Isolated but harmful misclassification (e.g. a credible threat missed) — target response time: 24 hours\n\n- **Sev 3:** Isolated false positive with no downstream harm (comment queued, later cleared on review) — target response time: 5 business days\n\n\n## Detection\nModerator-reported misclassifications logged in the moderation tool; periodic sampling audit (see Legal-1 methodology) run quarterly to catch systematic drift the moderator-reporting channel would miss.\n\n\n## Response Steps\n1. **Triage** — assign severity level and an incident owner.\n2. **Contain** — Raise the flagging threshold or disable auto-surfacing for the affected category pending review.\n3. **Notify** — escalate per severity level to: Trust & Safety lead, Model owner\n4. **Remediate** — fix the root cause; if the root cause touches the model itself,\n   trigger a re-assessment of the [Risk Assessment](risk_assessment.md).\n5. **Report** — log the incident and outcome in the AI system inventory; notify\n   affected parties where required.\n\n## Post-Incident Review\nEvery incident above Severity 2 triggers a\npost-incident review within 5 business days, covering: what\nhappened, why the existing controls didn't catch it, and what changes to this\nrunbook or the [Human Oversight Design](human_oversight.md) follow from it.\n\n---\n_See also: [Risk Assessment](risk_assessment.md), [Human Oversight Design](human_oversight.md)._",
+    "vendor_risk_questionnaire.md": "# Vendor AI Risk Questionnaire: Toxic Comment Classifier (toxic-bert)\n\n_Even for an internally-built system, this document exists so the same\nquestionnaire is ready the day this capability is sourced from, or replaced by,\na third party._\nVersion 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03\n\n## Sourcing\n- **Vendor:** Internal\n\n\n## Questionnaire\n\n1. **What data does the vendor process, and where is it stored/processed?**\n   N/A -- internally deployed open-weight model; no vendor data-processing relationship exists for this checkpoint.\n\n2. **Can the vendor provide a model card or equivalent documentation for the\n   system supplied?**\n   N/A\n\n3. **What is the vendor's incident notification commitment (time to notify us\n   of a security or model-behaviour incident)?**\n   N/A\n\n4. **Has the vendor's system been independently tested for bias/fairness, and\n   will they share results?**\n   N/A -- see this project's own planned fairness audit instead.\n\n5. **What happens to our data if the contract ends (deletion, return, retention\n   period)?**\n   N/A\n\n6. **Right to audit:** does the contract include a right to audit or request\n   evidence of the vendor's own governance controls?\n   N/A -- this section is retained in every generated document set so it's ready the day any component of this pipeline is sourced from a vendor instead.\n\n---\n_See also: [Risk Assessment](risk_assessment.md), [Data Governance Statement](data_governance.md)._"
+  }
+};
+
+/* ======================================================================
+   RISK MATRIX
+   ====================================================================== */
+const RISK_MATRIX = {
+  "Low,Low": "Low", "Low,Medium": "Low", "Low,High": "Medium",
+  "Medium,Low": "Low", "Medium,Medium": "Medium", "Medium,High": "High",
+  "High,Low": "Medium", "High,Medium": "High", "High,High": "Critical",
+};
+function computeRiskLevel(p, s) { return RISK_MATRIX[`${p},${s}`] || "Unrated"; }
+
+/* ======================================================================
+   generate.py / templates/*.md.j2 port — one function per document,
+   mirroring the Jinja2 template structure line for line.
+   ====================================================================== */
+function renderModelCard(spec) {
+  let md = `# Model Card: ${spec.system_name}\n\n`;
+  md += `_Format follows Mitchell et al. (2019), "Model Cards for Model Reporting"._\n`;
+  md += `Version ${spec.version} · Owner: ${spec.owner} · Last updated: ${spec.generated_date}\n\n`;
+  md += `## Model Details\n${spec.description}\n\n`;
+  md += `- **Model type:** ${spec.model_type}\n`;
+  md += `- **Developed by:** ${spec.owner}\n`;
+  if (spec.base_model) md += `- **Base model:** ${spec.base_model}\n`;
+  md += `\n## Intended Use\n**Primary intended uses:** ${spec.intended_use}\n\n`;
+  md += `**Out-of-scope uses:** ${spec.out_of_scope_uses}\n\n`;
+  md += `## Training Data\n${spec.training_data_summary}\n\n`;
+  md += `## Evaluation Data\n${spec.evaluation_data_summary}\n\n`;
+  md += `## Performance\n`;
+  for (const m of spec.performance_metrics) {
+    md += `- **${m.name}:** ${m.value}`;
+    if (m.subgroup) md += ` (${m.subgroup})`;
+    md += `\n`;
+  }
+  md += `\n## Ethical Considerations\n${spec.ethical_considerations}\n\n`;
+  md += `## Caveats and Recommendations\n${spec.caveats_recommendations}\n\n`;
+  md += `---\n_See also: [Risk Assessment](risk_assessment.md), [Data Governance Statement](data_governance.md),\n[Human Oversight Design](human_oversight.md)._`;
+  return md;
+}
+
+function renderRiskAssessment(spec) {
+  let md = `# Risk Assessment: ${spec.system_name}\n\n`;
+  md += `_Scoring method follows AI Verify Testing Framework 4.3.1: risk = probability × severity,\nread alongside the scope of affected parties._\n`;
+  md += `Version ${spec.version} · Owner: ${spec.owner} · Last updated: ${spec.generated_date}\n\n`;
+  md += `## Risk Rating\n\n`;
+  md += `| Factor | Rating |\n|---|---|\n`;
+  md += `| Probability of harm occurring | ${spec.risk_probability} |\n`;
+  md += `| Severity if it occurs | ${spec.risk_severity} |\n`;
+  md += `| Affected parties | ${spec.affected_parties.join(", ")} |\n`;
+  md += `| **Overall risk level** | **${spec.overall_risk_level}** |\n\n`;
+  md += `## Rationale\n${spec.risk_notes}\n\n`;
+  md += `## Regulatory context\n`;
+  if (spec.eu_ai_act_tier) {
+    md += `- **EU AI Act tier:** ${spec.eu_ai_act_tier}`;
+    if (spec.eu_ai_act_basis) md += ` — ${spec.eu_ai_act_basis}`;
+    md += `\n`;
+  }
+  md += `- **Review cadence:** re-assess this rating on any material change to intended use,\n  training data, deployment context, or after any incident logged in the\n  [Incident Response Runbook](incident_response.md).\n\n`;
+  md += `## Mitigations in place\n`;
+  for (const m of spec.mitigations) md += `- ${m}\n`;
+  md += `\n---\n_See also: [Model Card](model_card.md), [Human Oversight Design](human_oversight.md),\n[Incident Response Runbook](incident_response.md)._`;
+  return md;
+}
+
+function renderDataGovernance(spec) {
+  let md = `# Data Governance Statement: ${spec.system_name}\n\n`;
+  md += `Version ${spec.version} · Owner: ${spec.owner} · Last updated: ${spec.generated_date}\n\n`;
+  md += `## Data Sources\n`;
+  for (const s of spec.data_sources) md += `- ${s}\n`;
+  md += `\n## Personal Data\n`;
+  md += `- **Contains personal data:** ${spec.pii_present ? "Yes" : "No"}\n`;
+  if (spec.pii_present) md += `- **Basis / handling:** ${spec.pii_handling_notes}\n`;
+  md += `\n## Data Governance Measures\n`;
+  for (const m of spec.data_governance_measures) md += `- ${m}\n`;
+  md += `\n## Known Limitations\n${spec.data_limitations}\n\n`;
+  md += `---\n_See also: [Model Card](model_card.md), [Risk Assessment](risk_assessment.md)._`;
+  return md;
+}
+
+function renderHumanOversight(spec) {
+  let md = `# Human Oversight Design: ${spec.system_name}\n\n`;
+  md += `_Model chosen from the three standard oversight patterns: human-in-the-loop\n(approve every decision), human-over-the-loop (monitor and can override),\nhuman-out-of-the-loop (fully autonomous, reviewed periodically)._\n`;
+  md += `Version ${spec.version} · Owner: ${spec.owner} · Last updated: ${spec.generated_date}\n\n`;
+  md += `## Oversight Model\n**Selected pattern:** ${spec.oversight_model}\n\n`;
+  md += `**Rationale:** ${spec.oversight_rationale}\n\n`;
+  md += `This pattern is matched to the system's overall risk level of\n**${spec.overall_risk_level}** (see [Risk Assessment](risk_assessment.md)) — the\nhigher the risk, the closer to human-in-the-loop the design should sit.\n\n`;
+  md += `## Escalation Path\n${spec.escalation_path}\n\n`;
+  md += `## Contestability\nIndividuals affected by this system's outputs can challenge a decision via:\n${spec.contestability_mechanism}\n\n`;
+  md += `---\n_See also: [Risk Assessment](risk_assessment.md), [Incident Response Runbook](incident_response.md)._`;
+  return md;
+}
+
+function renderIncidentResponse(spec) {
+  let md = `# Incident Response Runbook: ${spec.system_name}\n\n`;
+  md += `Version ${spec.version} · Owner: ${spec.owner} · Last updated: ${spec.generated_date}\n\n`;
+  md += `## Severity Levels\n`;
+  for (const lvl of spec.incident_severity_levels) {
+    md += `- **${lvl.name}:** ${lvl.description} — target response time: ${lvl.response_time}\n`;
+  }
+  md += `\n## Detection\n${spec.incident_detection}\n\n`;
+  md += `## Response Steps\n`;
+  md += `1. **Triage** — assign severity level and an incident owner.\n`;
+  md += `2. **Contain** — ${spec.containment_action}\n`;
+  md += `3. **Notify** — escalate per severity level to: ${spec.incident_contacts.join(", ")}\n`;
+  md += `4. **Remediate** — fix the root cause; if the root cause touches the model itself,\n   trigger a re-assessment of the [Risk Assessment](risk_assessment.md).\n`;
+  md += `5. **Report** — log the incident and outcome in the AI system inventory; notify\n   affected parties where required.\n\n`;
+  md += `## Post-Incident Review\nEvery incident above Severity ${spec.post_incident_review_threshold} triggers a\npost-incident review within ${spec.post_incident_review_window}, covering: what\nhappened, why the existing controls didn't catch it, and what changes to this\nrunbook or the [Human Oversight Design](human_oversight.md) follow from it.\n\n`;
+  md += `---\n_See also: [Risk Assessment](risk_assessment.md), [Human Oversight Design](human_oversight.md)._`;
+  return md;
+}
+
+function renderVendorRisk(spec) {
+  let md = `# Vendor AI Risk Questionnaire: ${spec.system_name}\n\n`;
+  md += `_Even for an internally-built system, this document exists so the same\nquestionnaire is ready the day this capability is sourced from, or replaced by,\na third party._\n`;
+  md += `Version ${spec.version} · Owner: ${spec.owner} · Last updated: ${spec.generated_date}\n\n`;
+  md += `## Sourcing\n- **Vendor:** ${spec.vendor_name}\n`;
+  if (spec.vendor_name !== "Internal") {
+    md += `- **Contract / DPA reference:** ${spec.vendor_contract_ref}\n`;
+  }
+  md += `\n## Questionnaire\n\n`;
+  md += `1. **What data does the vendor process, and where is it stored/processed?**\n   ${spec.vendor_data_handling}\n\n`;
+  md += `2. **Can the vendor provide a model card or equivalent documentation for the\n   system supplied?**\n   ${spec.vendor_documentation_available}\n\n`;
+  md += `3. **What is the vendor's incident notification commitment (time to notify us\n   of a security or model-behaviour incident)?**\n   ${spec.vendor_incident_notification_sla}\n\n`;
+  md += `4. **Has the vendor's system been independently tested for bias/fairness, and\n   will they share results?**\n   ${spec.vendor_fairness_testing}\n\n`;
+  md += `5. **What happens to our data if the contract ends (deletion, return, retention\n   period)?**\n   ${spec.vendor_offboarding_terms}\n\n`;
+  md += `6. **Right to audit:** does the contract include a right to audit or request\n   evidence of the vendor's own governance controls?\n   ${spec.vendor_audit_rights}\n\n`;
+  md += `---\n_See also: [Risk Assessment](risk_assessment.md), [Data Governance Statement](data_governance.md)._`;
+  return md;
+}
+
+const DOCUMENTS = [
+  "model_card.md", "risk_assessment.md", "data_governance.md",
+  "human_oversight.md", "incident_response.md", "vendor_risk_questionnaire.md",
+];
+const DOC_TITLES = {
+  "model_card.md": "Model Card",
+  "risk_assessment.md": "Risk Assessment",
+  "data_governance.md": "Data Governance Statement",
+  "human_oversight.md": "Human Oversight Design",
+  "incident_response.md": "Incident Response Runbook",
+  "vendor_risk_questionnaire.md": "Vendor AI Risk Questionnaire",
+};
+const RENDERERS = {
+  "model_card.md": renderModelCard,
+  "risk_assessment.md": renderRiskAssessment,
+  "data_governance.md": renderDataGovernance,
+  "human_oversight.md": renderHumanOversight,
+  "incident_response.md": renderIncidentResponse,
+  "vendor_risk_questionnaire.md": renderVendorRisk,
+};
+
+const REQUIRED_FIELDS = [
+  "system_name", "version", "owner", "description", "model_type",
+  "intended_use", "out_of_scope_uses", "training_data_summary",
+  "evaluation_data_summary", "performance_metrics", "ethical_considerations",
+  "caveats_recommendations", "risk_probability", "risk_severity",
+  "affected_parties", "risk_notes", "mitigations", "data_sources",
+  "pii_present", "data_governance_measures", "data_limitations",
+  "oversight_model", "oversight_rationale", "escalation_path",
+  "contestability_mechanism", "incident_severity_levels",
+  "incident_detection", "containment_action", "incident_contacts",
+  "post_incident_review_threshold", "post_incident_review_window",
+  "vendor_name", "vendor_data_handling", "vendor_documentation_available",
+  "vendor_incident_notification_sla", "vendor_fairness_testing",
+  "vendor_offboarding_terms", "vendor_audit_rights",
+];
+
+function validateSpec(spec) {
+  return REQUIRED_FIELDS.filter((f) => !(f in spec));
+}
+
+function generateAll(rawSpec) {
+  const spec = Object.assign({}, rawSpec);
+  spec.generated_date = spec.generated_date || new Date().toISOString().slice(0, 10);
+  spec.overall_risk_level = computeRiskLevel(spec.risk_probability, spec.risk_severity);
+  const rendered = {};
+  for (const d of DOCUMENTS) rendered[d] = RENDERERS[d](spec);
+  return { spec, rendered };
+}
+
+/* ======================================================================
+   GUIDED FORM — field schema (drives form generation, population, and
+   collection; validateSpec/generateAll above are untouched, so the
+   self-test suite keeps testing the same pipeline regardless of how the
+   spec object was assembled).
+   ====================================================================== */
+const FIELD_SCHEMA = {
+  system_name: { label: "System name", type: "text", required: true },
+  version: { label: "Version", type: "text", required: true, placeholder: "1.0" },
+  owner: { label: "Owner", type: "text", required: true, help: "Person or team accountable for this system." },
+  description: { label: "Description", type: "textarea", required: true },
+  model_type: { label: "Model type", type: "text", required: true, help: "Architecture / model family." },
+  base_model: { label: "Base model", type: "text", required: false, help: "Optional — e.g. bert-base-uncased." },
+  intended_use: { label: "Intended use", type: "textarea", required: true },
+  out_of_scope_uses: { label: "Out-of-scope uses", type: "textarea", required: true },
+  training_data_summary: { label: "Training data summary", type: "textarea", required: true },
+  evaluation_data_summary: { label: "Evaluation data summary", type: "textarea", required: true },
+  performance_metrics: {
+    label: "Performance metrics", type: "list-object", required: true,
+    itemFields: [{ key: "name", placeholder: "ROC-AUC (toxic)" }, { key: "value", placeholder: "0.98" }],
+  },
+  ethical_considerations: { label: "Ethical considerations", type: "textarea", required: true },
+  caveats_recommendations: { label: "Caveats & recommendations", type: "textarea", required: true },
+  risk_probability: { label: "Risk probability", type: "select", options: ["Low", "Medium", "High"], required: true },
+  risk_severity: { label: "Risk severity", type: "select", options: ["Low", "Medium", "High"], required: true },
+  affected_parties: { label: "Affected parties", type: "list-text", required: true, placeholder: "e.g. Platform users whose comments are scored" },
+  risk_notes: { label: "Risk rationale", type: "textarea", required: true, help: "Why the probability / severity ratings above were chosen." },
+  mitigations: { label: "Mitigations in place", type: "list-text", required: true },
+  eu_ai_act_tier: { label: "EU AI Act tier", type: "text", required: false, help: "Optional — adds a regulatory-tier line if supplied." },
+  eu_ai_act_basis: { label: "EU AI Act basis", type: "text", required: false, help: "Optional — basis for the tier above." },
+  data_sources: { label: "Data sources", type: "list-text", required: true },
+  pii_present: { label: "Contains personal data?", type: "select", options: ["No", "Yes"], required: true, boolean: true },
+  pii_handling_notes: { label: "Basis / handling", type: "textarea", required: false, help: "Only used if \"Contains personal data\" is Yes.", showIf: { field: "pii_present", equals: "Yes" } },
+  data_governance_measures: { label: "Data governance measures", type: "list-text", required: true },
+  data_limitations: { label: "Known data limitations", type: "textarea", required: true },
+  oversight_model: { label: "Oversight model", type: "select", options: ["Human-in-the-loop", "Human-over-the-loop", "Human-out-of-the-loop"], required: true },
+  oversight_rationale: { label: "Oversight rationale", type: "textarea", required: true },
+  escalation_path: { label: "Escalation path", type: "textarea", required: true },
+  contestability_mechanism: { label: "Contestability mechanism", type: "textarea", required: true },
+  incident_severity_levels: {
+    label: "Incident severity levels", type: "list-object", required: true,
+    itemFields: [{ key: "name", placeholder: "Sev 1" }, { key: "description", placeholder: "What makes this severity" }, { key: "response_time", placeholder: "4 hours" }],
+  },
+  incident_detection: { label: "Incident detection", type: "textarea", required: true, help: "How incidents get noticed." },
+  containment_action: { label: "Containment action", type: "textarea", required: true, help: "First action taken to contain an incident." },
+  incident_contacts: { label: "Incident contacts", type: "list-text", required: true, placeholder: "e.g. Trust & Safety lead" },
+  post_incident_review_threshold: { label: "Post-incident review threshold", type: "text", required: true, help: "Severity level that triggers a review, e.g. 2." },
+  post_incident_review_window: { label: "Post-incident review window", type: "text", required: true, placeholder: "5 business days" },
+  vendor_name: { label: "Vendor name", type: "text", required: true, help: "Use \"Internal\" if not vendor-sourced." },
+  vendor_contract_ref: { label: "Contract / DPA reference", type: "text", required: false, showIf: { field: "vendor_name", notEquals: "Internal" } },
+  vendor_data_handling: { label: "Vendor data handling", type: "textarea", required: true },
+  vendor_documentation_available: { label: "Vendor documentation available", type: "textarea", required: true },
+  vendor_incident_notification_sla: { label: "Vendor incident notification SLA", type: "textarea", required: true },
+  vendor_fairness_testing: { label: "Vendor fairness testing", type: "textarea", required: true },
+  vendor_offboarding_terms: { label: "Vendor offboarding terms", type: "textarea", required: true },
+  vendor_audit_rights: { label: "Vendor audit rights", type: "textarea", required: true },
+};
+
+const SECTIONS = [
+  { title: "Model basics", open: true, fields: ["system_name", "version", "owner", "description", "model_type", "base_model", "intended_use", "out_of_scope_uses"] },
+  { title: "Training & evaluation", fields: ["training_data_summary", "evaluation_data_summary", "performance_metrics", "ethical_considerations", "caveats_recommendations"] },
+  { title: "Risk", fields: ["risk_probability", "risk_severity", "affected_parties", "risk_notes", "mitigations", "eu_ai_act_tier", "eu_ai_act_basis"] },
+  { title: "Data", fields: ["data_sources", "pii_present", "pii_handling_notes", "data_governance_measures", "data_limitations"] },
+  { title: "Human oversight", fields: ["oversight_model", "oversight_rationale", "escalation_path", "contestability_mechanism"] },
+  { title: "Incident response", fields: ["incident_severity_levels", "incident_detection", "containment_action", "incident_contacts", "post_incident_review_threshold", "post_incident_review_window"] },
+  { title: "Sourcing / vendor", fields: ["vendor_name", "vendor_contract_ref", "vendor_data_handling", "vendor_documentation_available", "vendor_incident_notification_sla", "vendor_fairness_testing", "vendor_offboarding_terms", "vendor_audit_rights"] },
+];
+
+/* ======================================================================
+   UI WIRING
+   ====================================================================== */
+function el(id) { return document.getElementById(id); }
+function fieldLabel(key) { return (FIELD_SCHEMA[key] && FIELD_SCHEMA[key].label) || key; }
+
+function switchTab(name) {
+  document.querySelectorAll(".tab-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === "panel-" + name));
+}
+
+function renderMatrixTable() {
+  const levels = ["Low", "Medium", "High"];
+  let html = "<tr><th>Probability \\ Severity</th>" + levels.map((s) => `<th>${s}</th>`).join("") + "</tr>";
+  for (const p of levels) {
+    html += `<tr><th>${p}</th>` + levels.map((s) => `<td class="matrix-cell">${computeRiskLevel(p, s)}</td>`).join("") + "</tr>";
+  }
+  el("matrix-table").innerHTML = html;
+}
+
+function renderDocTabs() {
+  const tabsEl = el("doc-tabs");
+  const panelsEl = el("doc-panels");
+  tabsEl.innerHTML = "";
+  panelsEl.innerHTML = "";
+  DOCUMENTS.forEach((d, i) => {
+    const btn = document.createElement("button");
+    btn.className = "doc-tab-btn" + (i === 0 ? " active" : "");
+    btn.textContent = DOC_TITLES[d];
+    btn.dataset.doc = d;
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".doc-tab-btn").forEach((b) => b.classList.toggle("active", b === btn));
+      document.querySelectorAll(".doc-panel").forEach((p) => p.classList.toggle("active", p.dataset.doc === d));
+    });
+    tabsEl.appendChild(btn);
+
+    const panel = document.createElement("div");
+    panel.className = "doc-panel" + (i === 0 ? " active" : "");
+    panel.dataset.doc = d;
+    const pre = document.createElement("pre");
+    pre.className = "doc-output";
+    pre.id = "doc-output-" + d;
+    panel.appendChild(pre);
+    panelsEl.appendChild(panel);
+  });
+}
+
+/* --- guided form: building, row add/remove, populate, collect --- */
+
+function makeFieldWrap(key, def, labelEl, controlEl) {
+  const wrap = document.createElement("div");
+  wrap.className = "field";
+  wrap.id = `field-wrap-${key}`;
+  wrap.appendChild(labelEl);
+  wrap.appendChild(controlEl);
+  if (def.help) {
+    const help = document.createElement("p");
+    help.className = "field-help";
+    help.textContent = def.help;
+    wrap.appendChild(help);
+  }
+  return wrap;
+}
+
+function buildScalarField(key, def) {
+  const label = document.createElement("label");
+  label.textContent = def.label + (def.required ? "" : " (optional)");
+  label.setAttribute("for", `field-${key}`);
+  let control;
+  if (def.type === "select") {
+    control = document.createElement("select");
+    control.id = `field-${key}`;
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "Select…";
+    control.appendChild(blank);
+    def.options.forEach((opt) => {
+      const o = document.createElement("option");
+      o.value = opt;
+      o.textContent = opt;
+      control.appendChild(o);
+    });
+    if (key === "pii_present" || key === "vendor_name") {
+      control.addEventListener("change", updateConditionalVisibility);
+    }
+  } else if (def.type === "textarea") {
+    control = document.createElement("textarea");
+    control.id = `field-${key}`;
+    control.rows = 3;
+  } else {
+    control = document.createElement("input");
+    control.type = "text";
+    control.id = `field-${key}`;
+    if (def.placeholder) control.placeholder = def.placeholder;
+    if (key === "vendor_name") control.addEventListener("input", updateConditionalVisibility);
+  }
+  return makeFieldWrap(key, def, label, control);
+}
+
+function addListTextRow(key, value) {
+  const container = el(`list-${key}`);
+  const def = FIELD_SCHEMA[key];
+  const row = document.createElement("div");
+  row.className = "list-row";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = value || "";
+  if (def.placeholder) input.placeholder = def.placeholder;
+  const rm = document.createElement("button");
+  rm.type = "button";
+  rm.className = "list-remove-btn";
+  rm.textContent = "✕";
+  rm.title = "Remove this row";
+  rm.addEventListener("click", () => row.remove());
+  row.appendChild(input);
+  row.appendChild(rm);
+  container.insertBefore(row, container.querySelector(".add-row-btn"));
+}
+
+function addListObjectRow(key, obj) {
+  const container = el(`list-${key}`);
+  const def = FIELD_SCHEMA[key];
+  const row = document.createElement("div");
+  row.className = "list-row";
+  const fieldsWrap = document.createElement("div");
+  fieldsWrap.className = "item-row-fields";
+  def.itemFields.forEach((f) => {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.dataset.field = f.key;
+    input.placeholder = f.placeholder || f.key;
+    input.value = (obj && obj[f.key]) || "";
+    fieldsWrap.appendChild(input);
+  });
+  const rm = document.createElement("button");
+  rm.type = "button";
+  rm.className = "list-remove-btn";
+  rm.textContent = "✕";
+  rm.title = "Remove this row";
+  rm.addEventListener("click", () => row.remove());
+  row.appendChild(fieldsWrap);
+  row.appendChild(rm);
+  container.insertBefore(row, container.querySelector(".add-row-btn"));
+}
+
+function buildListField(key, def) {
+  const label = document.createElement("label");
+  label.textContent = def.label + (def.required ? "" : " (optional)");
+  const container = document.createElement("div");
+  container.id = `list-${key}`;
+  const addBtn = document.createElement("button");
+  addBtn.type = "button";
+  addBtn.className = "add-row-btn";
+  addBtn.textContent = "+ Add row";
+  addBtn.addEventListener("click", () => {
+    if (def.type === "list-text") addListTextRow(key, "");
+    else addListObjectRow(key, {});
+  });
+  container.appendChild(addBtn);
+  return makeFieldWrap(key, def, label, container);
+}
+
+function buildFormSections() {
+  const form = el("spec-form");
+  form.innerHTML = "";
+  SECTIONS.forEach((section) => {
+    const details = document.createElement("details");
+    details.className = "form-section";
+    if (section.open) details.open = true;
+    const summary = document.createElement("summary");
+    summary.textContent = section.title;
+    details.appendChild(summary);
+    const body = document.createElement("div");
+    body.className = "section-body";
+    section.fields.forEach((key) => {
+      const def = FIELD_SCHEMA[key];
+      const node = (def.type === "list-text" || def.type === "list-object") ? buildListField(key, def) : buildScalarField(key, def);
+      body.appendChild(node);
+    });
+    details.appendChild(body);
+    form.appendChild(details);
+  });
+}
+
+function setListTextRows(key, values) {
+  const container = el(`list-${key}`);
+  container.querySelectorAll(".list-row").forEach((r) => r.remove());
+  (values.length ? values : [""]).forEach((v) => addListTextRow(key, v));
+}
+
+function setListObjectRows(key, objs) {
+  const container = el(`list-${key}`);
+  container.querySelectorAll(".list-row").forEach((r) => r.remove());
+  (objs.length ? objs : [{}]).forEach((o) => addListObjectRow(key, o));
+}
+
+function populateForm(spec) {
+  Object.keys(FIELD_SCHEMA).forEach((key) => {
+    const def = FIELD_SCHEMA[key];
+    const value = spec[key];
+    if (def.type === "list-text") {
+      setListTextRows(key, Array.isArray(value) ? value : []);
+    } else if (def.type === "list-object") {
+      setListObjectRows(key, Array.isArray(value) ? value : []);
+    } else if (def.type === "select" && def.boolean) {
+      const input = el(`field-${key}`);
+      if (input) input.value = value === true ? "Yes" : value === false ? "No" : "";
+    } else {
+      const input = el(`field-${key}`);
+      if (input) input.value = value != null ? value : "";
+    }
+  });
+  updateConditionalVisibility();
+}
+
+function updateConditionalVisibility() {
+  Object.keys(FIELD_SCHEMA).forEach((key) => {
+    const def = FIELD_SCHEMA[key];
+    if (!def.showIf) return;
+    const otherInput = el(`field-${def.showIf.field}`);
+    const otherVal = otherInput ? otherInput.value.trim() : "";
+    let visible = true;
+    if ("equals" in def.showIf) visible = otherVal === def.showIf.equals;
+    if ("notEquals" in def.showIf) visible = otherVal.length > 0 && otherVal.toLowerCase() !== def.showIf.notEquals.toLowerCase();
+    const wrap = el(`field-wrap-${key}`);
+    if (wrap) wrap.style.display = visible ? "" : "none";
+  });
+}
+
+function collectSpecFromForm() {
+  const spec = {};
+  Object.keys(FIELD_SCHEMA).forEach((key) => {
+    const def = FIELD_SCHEMA[key];
+    if (def.type === "list-text") {
+      const vals = Array.from(document.querySelectorAll(`#list-${key} .list-row input`))
+        .map((inp) => inp.value.trim())
+        .filter((v) => v.length > 0);
+      if (vals.length > 0) spec[key] = vals;
+    } else if (def.type === "list-object") {
+      const objs = Array.from(document.querySelectorAll(`#list-${key} .list-row`))
+        .map((row) => {
+          const obj = {};
+          def.itemFields.forEach((f) => {
+            const input = row.querySelector(`[data-field="${f.key}"]`);
+            obj[f.key] = input ? input.value.trim() : "";
+          });
+          return obj;
+        })
+        .filter((o) => Object.values(o).some((v) => v.length > 0));
+      if (objs.length > 0) spec[key] = objs;
+    } else if (def.type === "select" && def.boolean) {
+      const input = el(`field-${key}`);
+      if (input && input.value) spec[key] = input.value === "Yes";
+    } else {
+      const input = el(`field-${key}`);
+      if (input && input.value.trim().length > 0) spec[key] = input.value.trim();
+    }
+  });
+  return spec;
+}
+
+function runGenerate() {
+  const resultEl = el("risk-result");
+  const rawSpec = collectSpecFromForm();
+  const missing = validateSpec(rawSpec);
+  if (missing.length > 0) {
+    resultEl.className = "result-box error-box";
+    resultEl.innerHTML = `<p><strong>Missing required field(s):</strong> ${missing.map(fieldLabel).join(", ")}</p><p>Fill these in above (expand the relevant section) and click Generate again.</p>`;
+    DOCUMENTS.forEach((d) => { el("doc-output-" + d).textContent = ""; });
+    return;
+  }
+  const { spec, rendered } = generateAll(rawSpec);
+  resultEl.className = "result-box";
+  resultEl.innerHTML = `<p><strong>Overall risk level: ${spec.overall_risk_level}</strong> (probability: ${spec.risk_probability} × severity: ${spec.risk_severity})</p>`;
+  DOCUMENTS.forEach((d) => { el("doc-output-" + d).textContent = rendered[d]; });
+}
+
+const METHODOLOGY_HTML = `
+<h3 style="margin-top:0">Why this exists</h3>
+<p>A fairness audit or a risk classification is only as useful as the paper trail behind it.
+Regulators, auditors, and internal review boards don't ask "is this model good" in the abstract
+&mdash; they ask for specific artifacts: a model card, a documented risk rating, a data governance
+statement, a named human-oversight design, an incident runbook, a vendor questionnaire. Writing
+those by hand for every system a team ships doesn't scale, and hand-written documentation drifts
+out of date the moment anyone changes the model. This project treats the documentation itself as a
+build artifact: one spec in, six consistent governance documents out, regenerated on demand rather
+than maintained by hand.</p>
+
+<h3>How it works</h3>
+<ol>
+<li><strong>One spec, six documents.</strong> Every fact about a system &mdash; its intended use, its
+training data, its risk rating inputs, its oversight model &mdash; is recorded once. The generator
+renders that single source of truth through six templates, so the Model Card and the Risk
+Assessment can never disagree about what the system is for.</li>
+<li><strong>The risk score is a visible 3&times;3 matrix, not a black box.</strong> Probability
+&times; severity &rarr; Low / Medium / High / Critical, following the AI Verify Testing Framework
+4.3.1 approach. A reviewer can check the computed level against the matrix in ten seconds &mdash;
+see the Risk Matrix tab.</li>
+<li><strong>The six documents cross-reference each other.</strong> The Human Oversight Design cites
+the computed risk level directly; the Incident Response Runbook links back to the Risk Assessment;
+every document links to its siblings. Change the spec once and every downstream document and
+cross-reference updates together.</li>
+<li><strong>A vendor questionnaire ships even for internally-built systems</strong>, so the same
+six-document set is ready, unchanged in shape, the day any component is sourced from &mdash; or
+replaced by &mdash; a third party.</li>
+</ol>
+
+<h3>Sources</h3>
+<ul>
+<li>Mitchell, M. et al. (2019), <a href="https://arxiv.org/abs/1810.03993">"Model Cards for Model Reporting"</a> &mdash; the Model Card format this generator follows</li>
+<li><a href="https://aiverifyfoundation.sg/">AI Verify Testing Framework</a> 4.3.1 &mdash; the probability &times; severity risk-scoring approach</li>
+<li>Regulation (EU) 2024/1689 (the EU AI Act) &mdash; referenced in the Risk Assessment's regulatory-context section</li>
+<li><a href="https://www.pdpc.gov.sg/help-and-resources/2020/01/model-ai-governance-framework">Singapore Model AI Governance Framework</a> &mdash; human-oversight pattern terminology (human-in-the-loop / over-the-loop / out-of-the-loop)</li>
+</ul>
+
+<h3>Limitations &mdash; read before relying on this for anything real</h3>
+<ul>
+<li><strong>This generates documentation, not governance.</strong> A Model Card this tool renders is
+only as accurate as the spec someone filled in &mdash; it does not verify any claim, run any
+fairness test, or check any number against the actual model.</li>
+<li>The risk matrix is deliberately simple (3&times;3, two inputs). A real governance program will
+want a richer scoring model for genuinely high-stakes systems &mdash; this one is legible by design,
+not exhaustive.</li>
+<li>Every generated document is a starting draft. A real Risk Assessment, Human Oversight Design, or
+Incident Response Runbook needs sign-off from the people who actually own those decisions, not just
+a filled-in template.</li>
+<li>This is a portfolio project, not a compliance tool in production use anywhere.</li>
+</ul>
+`;
+
+function wireUI() {
+  document.querySelectorAll(".tab-btn").forEach((btn) => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
+  buildFormSections();
+  populateForm(ARTIFACT.spec);
+  renderMatrixTable();
+  renderDocTabs();
+  el("generate-btn").addEventListener("click", runGenerate);
+  el("reset-btn").addEventListener("click", () => { populateForm(ARTIFACT.spec); runGenerate(); });
+  el("json-import-btn").addEventListener("click", () => {
+    const msg = el("json-adv-msg");
+    try {
+      const parsed = JSON.parse(el("json-adv-box").value);
+      if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) throw new Error("JSON must be an object of field names to values.");
+      populateForm(parsed);
+      msg.textContent = "Loaded into the form above. Scroll up to review, then click Generate.";
+      msg.style.color = "var(--green)";
+    } catch (e) {
+      msg.textContent = "JSON error: " + e.message;
+      msg.style.color = "var(--red)";
+    }
+  });
+  el("json-export-btn").addEventListener("click", () => {
+    el("json-adv-box").value = JSON.stringify(collectSpecFromForm(), null, 2);
+    const msg = el("json-adv-msg");
+    msg.textContent = "Exported the form's current values as JSON above.";
+    msg.style.color = "var(--green)";
+  });
+  el("methodology-card").innerHTML = METHODOLOGY_HTML;
+  runGenerate();
+}
+
+/* ======================================================================
+   SELF-TESTS
+   ====================================================================== */
+function runSelfTests() {
+  const results = [];
+  const assert_ = (name, cond) => results.push({ name, pass: !!cond });
+
+  // --- risk matrix: all 9 cells match the Python RISK_MATRIX, shape sane ---
+  {
+    const levels = ["Low", "Medium", "High"];
+    let allValid = true;
+    for (const p of levels) for (const s of levels) {
+      if (!["Low", "Medium", "High", "Critical"].includes(computeRiskLevel(p, s))) allValid = false;
+    }
+    assert_("All 9 risk-matrix cells resolve to a valid level", allValid);
+    assert_("computeRiskLevel(Low, Low) === Low", computeRiskLevel("Low", "Low") === "Low");
+    assert_("computeRiskLevel(High, High) === Critical", computeRiskLevel("High", "High") === "Critical");
+    assert_("computeRiskLevel(Medium, Medium) === Medium", computeRiskLevel("Medium", "Medium") === "Medium");
+  }
+
+  // --- worked example: generate from the embedded spec, check against the
+  //     Python-rendered reference for content (not byte-exact whitespace) ---
+  {
+    const { spec, rendered } = generateAll(ARTIFACT.spec);
+    assert_("Worked example: overall_risk_level === Medium", spec.overall_risk_level === "Medium");
+    DOCUMENTS.forEach((d) => {
+      const ref = ARTIFACT.reference_rendered[d];
+      const ours = rendered[d];
+      assert_(`Worked example: ${d} is non-empty`, ours.length > 100);
+      assert_(`Worked example: ${d} has no unrendered template tag`, !ours.includes("{{") && !ours.includes("{%"));
+      // Spot-check a handful of facts actually made it into the document,
+      // rather than requiring whitespace-identical output to the Python side.
+      assert_(`Worked example: ${d} contains the system name`, ours.includes(spec.system_name));
+      assert_(`Worked example: ${d} matches reference length within 5%`, Math.abs(ours.length - ref.length) / ref.length < 0.05);
+    });
+    assert_("Model Card lists both performance metrics", rendered["model_card.md"].includes("ROC-AUC (toxic)") && rendered["model_card.md"].includes("ROC-AUC (identity_hate)"));
+    assert_("Risk Assessment lists all 3 mitigations", spec.mitigations.every((m) => rendered["risk_assessment.md"].includes(m)));
+    assert_("Incident Response lists all 3 severity levels", spec.incident_severity_levels.every((lvl) => rendered["incident_response.md"].includes(lvl.name)));
+  }
+
+  // --- conditional branches: pii_present true/false, vendor_name != Internal ---
+  {
+    const base = Object.assign({}, ARTIFACT.spec);
+    base.pii_present = false;
+    const { rendered: r1 } = generateAll(base);
+    assert_("pii_present=false omits the Basis/handling line", !r1["data_governance.md"].includes("Basis / handling"));
+
+    const base2 = Object.assign({}, ARTIFACT.spec);
+    base2.pii_present = true;
+    const { rendered: r2 } = generateAll(base2);
+    assert_("pii_present=true includes the Basis/handling line", r2["data_governance.md"].includes("Basis / handling"));
+
+    const base3 = Object.assign({}, ARTIFACT.spec, { vendor_name: "Acme Corp", vendor_contract_ref: "DPA-2026-01" });
+    const { rendered: r3 } = generateAll(base3);
+    assert_("vendor_name != Internal includes Contract/DPA reference", r3["vendor_risk_questionnaire.md"].includes("DPA-2026-01"));
+
+    const { rendered: r4 } = generateAll(ARTIFACT.spec);
+    assert_("vendor_name === Internal omits Contract/DPA reference", !r4["vendor_risk_questionnaire.md"].includes("Contract / DPA reference"));
+  }
+
+  // --- validation: missing required fields are detected ---
+  {
+    const missing = validateSpec({ system_name: "Foo" });
+    assert_("validateSpec flags missing required fields", missing.length > 30);
+    assert_("validateSpec passes the full worked-example spec", validateSpec(ARTIFACT.spec).length === 0);
+  }
+
+  return results;
+}
+
+(function main() {
+  wireUI();
+  const results = runSelfTests();
+  const failed = results.filter((r) => !r.pass);
+  const banner = el("selftest-banner");
+  if (failed.length === 0) {
+    banner.className = "pass";
+    banner.textContent = `Self-tests: ${results.length}/${results.length} passed.`;
+  } else {
+    banner.className = "fail";
+    banner.textContent = `Self-tests: ${results.length - failed.length}/${results.length} passed. Failed: ` + failed.map((f) => f.name).join(", ");
+  }
+  console.log("Self-test results:", results);
+})();
+</script>
+</body>
+</html>

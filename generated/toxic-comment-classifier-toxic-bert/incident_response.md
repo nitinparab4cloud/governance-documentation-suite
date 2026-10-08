@@ -1,6 +1,6 @@
 # Incident Response Runbook: Toxic Comment Classifier (toxic-bert)
 
-Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-09-09
+Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Unitary AI) · Last updated: 2026-10-03
 
 ## Severity Levels
 
@@ -12,7 +12,7 @@ Version 1.0 · Owner: Nitin Parab (portfolio project — not affiliated with Uni
 
 
 ## Detection
-Moderator-reported misclassifications logged in the moderation tool; periodic sampling audit (see Case 02 methodology) run quarterly to catch systematic drift the moderator-reporting channel would miss.
+Moderator-reported misclassifications logged in the moderation tool; periodic sampling audit (see Legal-1 methodology) run quarterly to catch systematic drift the moderator-reporting channel would miss.
 
 
 ## Response Steps

@@ -1,7 +1,3 @@
-# Copyright © 2026 Nitin Parab. Part of the "AI Governance Case Files" portfolio
-# (https://github.com/nitinparab4cloud/governance-documentation-suite).
-# See this project's LICENSE file for reuse terms.
-
 """
 test_generate.py
 -----------------
